@@ -10,6 +10,7 @@ Each directory hosts three Matlab scripts:
 - *_main.m: the main program (load input data, specify parameters, and run simulations)
 - *_model.m: ODE model, called by *_main.m   
 - events_time.m: controls ODE time steps, called by *_main.m
+
 Run *_main.m from within each directory. 
 
 E-mail weidu.pku@gmail.com for inquiries. 
