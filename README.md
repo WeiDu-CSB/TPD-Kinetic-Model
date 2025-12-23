@@ -7,7 +7,7 @@ Matlab scripts for modeling targeted protein degradation. See model details in "
 - WEE1: WEE1 system, reproduce Figure 5A/5B/5E. Adapt this to simulate functional inhibition, inhibition landscape and hook effect of your target of interest. 
 
 Each directory hosts three Matlab scripts: 
-- *_main.m: the main program
+- *_main.m: the main program (load input data, specify parameters, and run simulations)
 - *_model.m: ODE model, called by *_main.m   
 - events_time.m: controls ODE time steps, called by *_main.m
 Run *_main.m from within each directory. 
