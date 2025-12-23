@@ -1,30 +1,46 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % input parameters
-N_CRBN=12265;         % E3(CRBN) protein copy number
-N_BTK=22692;          % target(BTK) protein copy number
-Thalf_BTK=71.9;       % target(BTK) protein half-life; hr
-KD_E3=3.84;           % PROTAC E3(CRBN) KD; uM
-alpha=1;              % ternary complex cooperativity
-V=4*10^(-12);         % cell volumn; L
-NA_MOLE=6.02*10^23;   % Avocado's number
-T=24*60;              % timespan of degradation; min
 
+% constants
+V=4*10^(-12);           % cell volumn; L
+NA_MOLE=6.02*10^23;     % Avocado's number
+
+% target protein and E3 copy number; typical range: 1000 - 100000
+N_CRBN=12265;           % CRBN protein copy number
+N_BTK=22692;            % BTK protein copy number
+
+% target half-life; typical range: 0.5-200 hr
+Thalf_BTK=71.9;         % BTK protein half-life; hr
+
+% degrader-E3 KD; typical range: 0.001-10 uM 
+KD_E3=3.84;             % CRBN KD; uM
+
+% cooperativity; typical range: 0.1-100
+alpha=1;                % ternary complex cooperativity
+
+% timespan of degradation; typical range: 30-2160 min
+T=24*60;                % timespan of degradation; min
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % parameter conversion
 T_E3=N_CRBN/V/NA_MOLE*10^6;     % E3(CRBN) protein concentration; uM
 T_P=N_BTK/V/NA_MOLE*10^6;       % target(BTK) protein concentration; uM
 kdp=log(2)/Thalf_BTK/60;        % target(BTK) endogeneous protein degradation rate; min^(-1)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % simulate degradability landscape
-
-options=odeset('events',@events_time);
+options=odeset('events',@events_time);      % set ODE timepoints
 tic;
 
-kpr_series=10.^[-2:0.01:2];
-KD_series=10.^[-4:0.01:1];
-dose_series=10.^[-4:0.2:1];
+kpr_series=10.^[-2:0.01:2];         % define kpr series
+KD_series=10.^[-4:0.01:1];          % define degrader-target KD series
+dose_series=10.^[-4:0.2:1];         % define dose series
 
-DMAX=zeros(length(KD_series),length(kpr_series));
-DC50=zeros(length(KD_series),length(kpr_series));
+DMAX=zeros(length(KD_series),length(kpr_series));     % initialize DMAX data matrix
+DC50=zeros(length(KD_series),length(kpr_series));     % initialize DC50 data matrix
 
 for i=1:length(KD_series)
     for j=1:length(kpr_series)
@@ -45,36 +61,32 @@ for i=1:length(KD_series)
 
         end
 
-        [min_fc min_fc_index]=min(fc);
-        
+        [min_fc min_fc_index]=min(fc);      % find DMAX and associated dose
         DMAX(i,j)=1-min_fc;
 
-        conc=[-4:0.001:log10(dose_series(min_fc_index))];
-        fit=spline(log10(dose_series(1:min_fc_index)),fc(1:min_fc_index),conc);
-        [min_value min_conc_index]=min((1-fit-(1-min_fc)/2).^2);
-
-        if(min(fc)>0.5)
+        if(min(fc)>0.5)                     % If DMAX<50%，DC50=10uM
             DC50(i,j)=1;
         else
-            conc=[-4:0.001:log10(dose_series(min_fc_index))];
-            fit=spline(log10(dose_series(1:min_fc_index)),fc(1:min_fc_index),conc);
+            conc=[-4:0.001:log10(dose_series(min_fc_index))];                          % find DC50 and associated dose
+            fit=spline(log10(dose_series(1:min_fc_index)),fc(1:min_fc_index),conc);     
             [min_value min_conc_index]=min((1-fit-0.5).^2);   
-
             DC50(i,j)=conc(min_conc_index);
   
         end
 
-        end
+     end
 end
 
+% save predicted DMAX and DC50 landscape
 csvwrite('BTK_DMAX.csv',DMAX);
 csvwrite('BTK_DC50.csv',DC50);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % plot degradability landscape with measured degrader data (Figure 4A)
 
-BTK_out=importdata('BTK_out.csv');
-BTK_index=importdata('BTK_index.csv');
+% import degrader data
+BTK_out=importdata('BTK_out.csv');         % BTK degrader data determined by predicted DMAX and DC50 landscape
 
 figure;
 set(gcf,'position',[720 230 720 230]);
@@ -91,9 +103,9 @@ yticklabels({'10^{4}' '10^{3}' '10^{2}' '10^{1}' '10^{0}' '10^{-1}'});
 title('DMAX (%)',FontSize=15);
 colorbar('Ticks',[0:0.1:1],'TickLabels',{'100%' '90%' '80%','70%','60%','50%','40%','30%','20%','10%','0%'});
 hold on;
-plot(BTK_index.data(1:7,2),502-BTK_index.data(1:7,1),"pentagram",MarkerFaceColor=marker_color(7,:),MarkerEdgeColor="black",MarkerSize=8);
+plot(BTK_out.data(1:7,2),502-BTK_out.data(1:7,1),"pentagram",MarkerFaceColor=marker_color(7,:),MarkerEdgeColor="black",MarkerSize=8);
 hold on;
-plot(BTK_index.data(8:13,2),502-BTK_index.data(8:13,1),"pentagram",MarkerFaceColor=marker_color(3,:),MarkerEdgeColor="black",MarkerSize=8);
+plot(BTK_out.data(8:13,2),502-BTK_out.data(8:13,1),"pentagram",MarkerFaceColor=marker_color(3,:),MarkerEdgeColor="black",MarkerSize=8);
 hold off;
 
 subplot(1,2,2);
@@ -107,9 +119,9 @@ yticklabels({'10^{4}' '10^{3}' '10^{2}' '10^{1}' '10^{0}' '10^{-1}'});
 title('DC50 (nM)',FontSize=15);
 colorbar('Ticks',[-4:1:1],'TickLabels',{'10^{-1}' '10^{0}' '10^{1}','10^{2}','10^{3}','10^4'});
 hold on;
-plot(BTK_index.data(1:7,2),502-BTK_index.data(1:7,1),"pentagram",MarkerFaceColor=marker_color(7,:),MarkerEdgeColor="black",MarkerSize=8);
+plot(BTK_out.data(1:7,2),502-BTK_out.data(1:7,1),"pentagram",MarkerFaceColor=marker_color(7,:),MarkerEdgeColor="black",MarkerSize=8);
 hold on;
-plot(BTK_index.data(8:13,2),502-BTK_index.data(8:13,1),"pentagram",MarkerFaceColor=marker_color(3,:),MarkerEdgeColor="black",MarkerSize=8);
+plot(BTK_out.data(8:13,2),502-BTK_out.data(8:13,1),"pentagram",MarkerFaceColor=marker_color(3,:),MarkerEdgeColor="black",MarkerSize=8);
 hold off;
 
 
@@ -117,9 +129,9 @@ set(gcf,'Units','inches');
 screenposition = get(gcf,'Position');
 set(gcf,'PaperPosition',[0.1 0.1 screenposition(3:4)+0.1],'PaperSize',[screenposition(3:4)+0.3]);
 saveas(gcf,'Figure4A.pdf');
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % plot comparison between predicted and measured degrader efficacy (Figure 4B)
 
 figure;
@@ -170,5 +182,6 @@ set(gcf,'Units','inches');
 screenposition = get(gcf,'Position');
 set(gcf,'PaperPosition',[0.1 0.1 screenposition(3:4)+0.1],'PaperSize',[screenposition(3:4)+0.3]);
 saveas(gcf,'Figure4B.pdf');
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
