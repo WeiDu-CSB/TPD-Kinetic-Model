@@ -83,11 +83,38 @@ csvwrite('BTK_DC50.csv',DC50);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% plot degradability landscape with measured degrader data (Figure 4A)
+% map BTK PROTACs onto degradability landscape
 
 % import degrader data
-BTK_out=importdata('BTK_out.csv');         % BTK degrader data determined by predicted DMAX and DC50 landscape
+BTK_data=importdata('BTK_data.csv');
+BTK_KD=BTK_data.data(:,1)/1000;         % BTK PROTACs KD (uM)
+Ramos_DC50=BTK_data.data(:,2)/1000;     % BTK PROTACs Ramos Cell DC50 (uM)
+Ramos_DMAX=BTK_data.data(:,3)/100;      % BTK PROTACs Ramos Cell DMAX
+THP1_DC50=BTK_data.data(:,4)/1000;      % BTK PROTACs THP-1 Cell DC50 (uM)
+THP1_DMAX=BTK_data.data(:,5)/100;       % BTK PROTACs THP-1 Cell DMAX
 
+BTK_map=zeros(7+6,4);
+for i=1:7
+    [~,KD_index]=min(abs(BTK_KD(i)-KD_series));
+    BTK_map(i,1)=KD_index;     
+    [~,kpr_index]=min(abs(Ramos_DC50(i)-10.^DC50(KD_index,:)));    % map kpr by measured DC50
+    BTK_map(i,2)=kpr_index;
+    BTK_map(i,3)=10^DC50(KD_index,kpr_index);                      % predict DC50 given mapped kpr
+    BTK_map(i,4)=DMAX(KD_index,kpr_index);                         % predict DMAX given mapped kpr
+end
+
+for i=2:7
+    [~,KD_index]=min(abs(BTK_KD(i)-KD_series));                
+    BTK_map(7+i-1,1)=KD_index; 
+    [~,kpr_index]=min(abs(THP1_DC50(i)-10.^DC50(KD_index,:)));     % map kpr by measured DC50
+    BTK_map(7+i-1,2)=kpr_index;
+    BTK_map(7+i-1,3)=10^DC50(KD_index,kpr_index);                  % predict DC50 given mapped kpr
+    BTK_map(7+i-1,4)=DMAX(KD_index,kpr_index);                     % predict DMAX given mapped kpr
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% plot degradability landscape with measured degrader data (Figure 4A)
 figure;
 set(gcf,'position',[720 230 720 230]);
 marker_color=gray(8);
@@ -103,9 +130,10 @@ yticklabels({'10^{4}' '10^{3}' '10^{2}' '10^{1}' '10^{0}' '10^{-1}'});
 title('DMAX (%)',FontSize=15);
 colorbar('Ticks',[0:0.1:1],'TickLabels',{'100%' '90%' '80%','70%','60%','50%','40%','30%','20%','10%','0%'});
 hold on;
-plot(BTK_out.data(1:7,2),502-BTK_out.data(1:7,1),"pentagram",MarkerFaceColor=marker_color(7,:),MarkerEdgeColor="black",MarkerSize=8);
+%plot(BTK_out.data(1:7,2),502-BTK_out.data(1:7,1),"pentagram",MarkerFaceColor=marker_color(7,:),MarkerEdgeColor="black",MarkerSize=8);
+plot(BTK_map(1:7,2),502-BTK_map(1:7,1),"pentagram",MarkerFaceColor=marker_color(7,:),MarkerEdgeColor="black",MarkerSize=8);
 hold on;
-plot(BTK_out.data(8:13,2),502-BTK_out.data(8:13,1),"pentagram",MarkerFaceColor=marker_color(3,:),MarkerEdgeColor="black",MarkerSize=8);
+plot(BTK_map(8:13,2),502-BTK_map(8:13,1),"pentagram",MarkerFaceColor=marker_color(3,:),MarkerEdgeColor="black",MarkerSize=8);
 hold off;
 
 subplot(1,2,2);
@@ -119,11 +147,10 @@ yticklabels({'10^{4}' '10^{3}' '10^{2}' '10^{1}' '10^{0}' '10^{-1}'});
 title('DC50 (nM)',FontSize=15);
 colorbar('Ticks',[-4:1:1],'TickLabels',{'10^{-1}' '10^{0}' '10^{1}','10^{2}','10^{3}','10^4'});
 hold on;
-plot(BTK_out.data(1:7,2),502-BTK_out.data(1:7,1),"pentagram",MarkerFaceColor=marker_color(7,:),MarkerEdgeColor="black",MarkerSize=8);
+plot(BTK_map(1:7,2),502-BTK_map(1:7,1),"pentagram",MarkerFaceColor=marker_color(7,:),MarkerEdgeColor="black",MarkerSize=8);
 hold on;
-plot(BTK_out.data(8:13,2),502-BTK_out.data(8:13,1),"pentagram",MarkerFaceColor=marker_color(3,:),MarkerEdgeColor="black",MarkerSize=8);
+plot(BTK_map(8:13,2),502-BTK_map(8:13,1),"pentagram",MarkerFaceColor=marker_color(3,:),MarkerEdgeColor="black",MarkerSize=8);
 hold off;
-
 
 set(gcf,'Units','inches');
 screenposition = get(gcf,'Position');
@@ -138,14 +165,14 @@ figure;
 set(gcf,'position',[580 260 580 260]);
 
 subplot(1,2,1);
-loglog(BTK_out.data(1:7,3),BTK_out.data(1:7,5),"pentagram",MarkerFaceColor=marker_color(7,:),MarkerEdgeColor="black",MarkerSize=8);
+loglog(Ramos_DC50*1000,BTK_map(1:7,3)*1000,"pentagram",MarkerFaceColor=marker_color(7,:),MarkerEdgeColor="black",MarkerSize=8);
 xlim([0.1 10000]);
 ylim([0.1 10000]);
 xticks([0.1 1 10 100 1000 10000]);
 xlabel('Observed DC50 (nM)');
 ylabel('Fitted DC50 (nM)');
 hold on;
-loglog(BTK_out.data(8:13,3),BTK_out.data(8:13,5),"pentagram",MarkerFaceColor=marker_color(3,:),MarkerEdgeColor="black",MarkerSize=8);
+loglog(THP1_DC50(2:7)*1000,BTK_map(8:13,3)*1000,"pentagram",MarkerFaceColor=marker_color(3,:),MarkerEdgeColor="black",MarkerSize=8);
 xlim([0.1 10000]);
 ylim([0.1 10000]);
 xticks([0.1 1 10 100 1000 10000]);
@@ -155,7 +182,7 @@ hold off;
 legend('Ramos','THP-1','Location','northoutside','NumColumns',2,'Orientation','horizontal');
 
 subplot(1,2,2);
-plot(BTK_out.data(1:7,4),BTK_out.data(1:7,6),"pentagram",MarkerFaceColor=marker_color(7,:),MarkerEdgeColor="black",MarkerSize=8);
+plot(Ramos_DMAX,BTK_map(1:7,4),"pentagram",MarkerFaceColor=marker_color(7,:),MarkerEdgeColor="black",MarkerSize=8);
 xlim([0.5 1]);
 ylim([0.5 1]);
 xticks([0.5 0.6 0.7 0.8 0.9 1]);
@@ -165,7 +192,7 @@ yticklabels({'50%' '60%' '70%' '80%' '90%' '100%'});
 xlabel('Observed DMAX (%)');
 ylabel('Predicted DMAX (%)');
 hold on;
-plot(BTK_out.data(8:13,4),BTK_out.data(8:13,6),"pentagram",MarkerFaceColor=marker_color(3,:),MarkerEdgeColor="black",MarkerSize=8);
+plot(THP1_DMAX(2:7),BTK_map(8:13,4),"pentagram",MarkerFaceColor=marker_color(3,:),MarkerEdgeColor="black",MarkerSize=8);
 xlim([0.5 1]);
 ylim([0.5 1]);
 xticks([0.5 0.6 0.7 0.8 0.9 1]);
@@ -176,7 +203,6 @@ xlabel('Observed DMAX (%)');
 ylabel('Predicted DMAX (%)');
 hold off;
 legend('Ramos','THP-1','Location','northoutside','NumColumns',2,'Orientation','horizontal');
-
 
 set(gcf,'Units','inches');
 screenposition = get(gcf,'Position');
