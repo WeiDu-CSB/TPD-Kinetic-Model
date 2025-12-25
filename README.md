@@ -1,5 +1,5 @@
 # TPD-Kinetic-Model
-Matlab scripts for modeling targeted protein degradation. See model details in "A quantitative approach for defining degradability landscape of protein degraders".  
+Matlab scripts for modeling targeted protein degradation. Please see model details in "A quantitative approach for defining degradability landscape of protein degraders".  
 
 - BRD: BRD system, reproduce Figure 2A/2B. Adapt this to simulate time course degradation response of your target of interest. 
 - KINOME: KINOME system, generate results for Figure 3. Adapt this to fit degradation rate from single dose degradation level measurement of your target of interest. 
@@ -13,4 +13,4 @@ Each directory hosts three Matlab scripts:
 
 Run *_main.m from within each directory. 
 
-E-mail weidu.pku@gmail.com for inquiries. 
+Please E-mail weidu.pku@gmail.com for inquiries. 
