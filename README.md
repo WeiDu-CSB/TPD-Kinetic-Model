@@ -8,7 +8,7 @@ Matlab scripts for modeling targeted protein degradation. Please see model detai
 
 
 # Installation Guide
-Download full directories to local 
+Download full directories from GitHub to local. 
 
 
 # Demo Instructions
@@ -30,4 +30,5 @@ Run *_main.m from within each directory.
 # License
 This code is released under the MIT License. 
 
+# Contact
 Please E-mail weidu.pku@gmail.com for inquiries. 
