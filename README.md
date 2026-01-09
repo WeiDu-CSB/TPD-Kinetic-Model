@@ -12,7 +12,7 @@ Download full directories from GitHub to local. (Estimated installation time: <5
 
 
 # Demo Instructions
-Purpose,output,and usage for each directory of scripts:
+Purpose, output, and usage for each directory of scripts:
 - BRD: BRD system, reproduce Figure 2A/2B. Adapt this to simulate time course degradation response of your target of interest. Update measured degradation time course data file BRD_tc.csv and parameters in BRD_main.m with your target of interest. (Estimated run time: <10min)
 - KINOME: KINOME system, generate results for Figure 3. Adapt this to fit degradation rate from single dose degradation level measurement of your target of interest. Update measured degradation level data file Foretinib_data.csv or TAE684_data.csv and parameters in KINOME_main.m with your target of interest. (Estimated run time: <10min)
 - LANDSCAPE: BTK system, reproduce Figure 4A/4B. Adapt this to simulate degradability landscape of your target of interest. Update measured degradation level data file BTK_data.csv and parameters in LANDSCAPE_main.m with your target of interest.(Estimated run time: <30min)
