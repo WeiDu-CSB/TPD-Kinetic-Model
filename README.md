@@ -18,13 +18,13 @@ Purpose and output for each directory of scripts:
 - LANDSCAPE: BTK system, reproduce Figure 4A/4B. Adapt this to simulate degradability landscape of your target of interest. (Estimated run time: <30min)
 - WEE1: WEE1 system, reproduce Figure 5A/5B/5E. Adapt this to simulate functional inhibition, inhibition landscape and hook effect of your target of interest. (Estimated run time: <30min)
 
-Directory structure:
+Directory structure:\
 Each directory hosts three Matlab scripts: 
 - *_main.m: the main program (load input data, specify parameters, and run simulations)
 - *_model.m: ODE model, called by *_main.m   
 - events_time.m: controls ODE time steps, called by *_main.m
 
-Run guide:
+Run guide:\
 Run *_main.m from within each directory. 
 
 # License
