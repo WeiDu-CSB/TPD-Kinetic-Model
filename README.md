@@ -12,7 +12,7 @@ Download full directories from GitHub to local.
 
 
 # Demo Instructions
-Purpose and outputs for each directory of scripts:
+Purpose and output for each directory of scripts:
 - BRD: BRD system, reproduce Figure 2A/2B. Adapt this to simulate time course degradation response of your target of interest. 
 - KINOME: KINOME system, generate results for Figure 3. Adapt this to fit degradation rate from single dose degradation level measurement of your target of interest. 
 - LANDSCAPE: BTK system, reproduce Figure 4A/4B. Adapt this to simulate degradability landscape of your target of interest. 
