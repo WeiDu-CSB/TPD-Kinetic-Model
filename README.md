@@ -3,8 +3,8 @@ Matlab scripts for modeling targeted protein degradation. Please see model detai
 
 
 # System Requirements
-OS Requirements: Supported for macOS, Windows, Linux. The scripts have tested on macOS Ventura 13.4.1.
-MATLAB Requirements: Supported for MATLAB 2023a and later versions. Require the Curve Fitting Toolbox.
+- OS Requirements: Supported for macOS, Windows, Linux. The scripts have tested on macOS Ventura 13.4.1.
+- MATLAB Requirements: Supported for MATLAB 2023a and later versions. Require the Curve Fitting Toolbox.
 
 
 # Installation Guide
