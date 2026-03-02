@@ -18,7 +18,7 @@ KD_E3=3.84;             % CRBN KD; uM
 % cooperativity; typical range: 0.1-100
 alpha=1;                % ternary complex cooperativity
 
-% timespan of degradation; typical range: 30-2160 min
+% timespan of degradation; typical range: 30-2160 min; should match with experiment, or set relatively long to examine attainment of steady-state
 T=24*60;                % timespan of degradation; min
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
