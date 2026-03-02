@@ -48,7 +48,7 @@ IC50_JQ1=0.054;     % JQ1 competitive displacement IC50; uM
 IC50_dBET1=0.747;   % dBET1 competitive displacement IC50; uM
 IC50_MZ1=0.432;     % MZ1 competitive displacement IC50; uM
 
-% timespan of degradation; typical range: 30-2160 min
+% timespan of degradation; typical range: 30-2160 min; should match with experiment, or set relatively long to examine attainment of steady-state
 T=5*60;              % timespan of degradation; min
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
