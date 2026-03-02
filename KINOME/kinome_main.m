@@ -36,7 +36,7 @@ concentration=copynumber/V/NA_MOLE*10^6;           % target protein concentratio
 dose_1=1;     % PROTAC dose; uM
 dose_2=0.1;   % PROTAC dose; uM
 
-T=24*60;   % timespan; min
+T=24*60;   % timespan; min; should match with experiment, or set relatively long to examine attainment of steady-state
 
 options=odeset('events',@events_time);       % set ODE timepoints
 tic;
@@ -113,8 +113,8 @@ concentration=copynumber/V/NA_MOLE*10^6;   % target protein concentration; uM
 dose_1=1;     % PROTAC dose; uM
 dose_2=0.1;   % PROTAC dose; uM
 
-T1=5*60;      % timespan; min
-T2=4*60;      % timespan; min
+T1=5*60;      % timespan; min; should match with experiment, or set relatively long to examine attainment of steady-state
+T2=4*60;      % timespan; min; should match with experiment, or set relatively long to examine attainment of steady-state
 
 options=odeset('events',@events_time);       % set ODE timepoints
 tic;
